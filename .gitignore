@@ -4,3 +4,4 @@ __pycache__/
 *.pkl
 *.h5
 .env
+model/saved_model/distilbert_model/
