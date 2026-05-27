@@ -159,8 +159,3 @@ This makes the AI system **explainable and transparent** — a critical requirem
 - Deploy on cloud platform (AWS / Heroku / Render)
 - Add browser extension for real-time news verification
 
----
-
-## ⚠️ Disclaimer
-
-This project is built for **educational purposes only** as a Final Year Project. It is not intended for real-world news verification without proper validation and retraining on recent data.
