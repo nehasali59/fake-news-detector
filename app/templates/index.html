@@ -1,0 +1,190 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake News Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>📰 Fake News Detector</h1>
+            <p>Paste a news article or headline to detect if it is real or fake</p>
+        </div>
+
+        <div class="card">
+            <form action="/predict" method="POST">
+                <label>Enter News Article or Headline</label>
+                <textarea name="article" rows="6" placeholder="Paste your news article here...">{{ article or '' }}</textarea>
+                <button type="submit">Analyze Article</button>
+            </form>
+        </div>
+
+        {% if result %}
+        <div class="card result-card {{ 'real' if result == 'Real News' else 'fake' }}">
+            <h2>{{ result }}</h2>
+            <p class="confidence">Confidence: {{ confidence }}%</p>
+
+            <div class="progress-bar">
+                <div class="progress {{ 'real' if result == 'Real News' else 'fake' }}" 
+                     style="width: {{ confidence }}%">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Why this prediction? (LIME Explanation)</h3>
+            <p class="explanation-info">Words highlighted in green push towards Real, red towards Fake</p>
+
+            <div class="words-container">
+                {% if positive_words %}
+                <div class="word-group">
+                    <h4>Real News Signals</h4>
+                    {% for word in positive_words %}
+                    <span class="word-badge real">{{ word }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if negative_words %}
+                <div class="word-group">
+                    <h4>Fake News Signals</h4>
+                    {% for word in negative_words %}
+                    <span class="word-badge fake">{{ word }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="footer">
+            <p>Built with Flask, Scikit-learn and LIME | Final Year Project</p>
+        </div>
+    </div>
+
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake News Detector</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+ 
+    <div class="noise"></div>
+ 
+    <nav class="navbar">
+        <div class="logo">
+            <span class="logo-icon">⬡</span>
+            <span>TruthLens</span>
+        </div>
+        <div class="nav-badge">AI Powered</div>
+    </nav>
+ 
+    <main class="main">
+ 
+        <section class="hero">
+            <div class="hero-tag">Explainable AI · NLP · Real-Time</div>
+            <h1 class="hero-title">Is it <span class="accent">real</span> or<br>just <span class="accent-fake">noise?</span></h1>
+            <!-- <p class="hero-sub">Paste any news article or headline. Our model analyzes it instantly and explains exactly why.</p> -->
+        </section>
+ 
+        <div class="card input-card">
+            <form action="/predict" method="POST">
+                <div class="input-header">
+                    <label>News Article or Headline</label>
+                    <span class="input-hint">Paste full article for best results</span>
+                </div>
+                <textarea name="article" rows="6" placeholder="Paste your news article here...&#10;&#10;e.g. Scientists discover that drinking coffee cures all diseases...">{{ article or '' }}</textarea>
+                <button type="submit" class="analyze-btn">
+                    <span>Analyze Article</span>
+                    <span class="btn-arrow">→</span>
+                </button>
+            </form>
+        </div>
+ 
+        {% if result %}
+ 
+        <div class="result-wrapper">
+            <div class="card verdict-card {{ 'real' if result == 'Real News' else 'fake' }}">
+                <div class="verdict-top">
+                    <div class="verdict-icon">{{ '✓' if result == 'Real News' else '✕' }}</div>
+                    <div>
+                        <div class="verdict-label">Verdict</div>
+                        <div class="verdict-text">{{ result }}</div>
+                    </div>
+                    <div class="confidence-pill">{{ confidence }}% confident</div>
+                </div>
+ 
+                <div class="meter-label">
+                    <span>Fake</span>
+                    <span>Real</span>
+                </div>
+                <div class="meter-track">
+                    <div class="meter-fill {{ 'real' if result == 'Real News' else 'fake' }}"
+                         style="width: {{ confidence if result == 'Real News' else (100 - confidence) }}%;">
+                    </div>
+                    <div class="meter-marker" style="left: {{ confidence if result == 'Real News' else (100 - confidence) }}%;"></div>
+                </div>
+            </div>
+ 
+            <div class="card explain-card">
+                <div class="explain-header">
+                    <div class="explain-title">
+                        <span class="explain-icon">◈</span>
+                        Why this prediction?
+                    </div>
+                    <!-- <span class="explain-sub">LIME Explainability</span> -->
+                </div>
+                <p class="explain-desc">Words that influenced the model's decision. Green = signals real news. Red = signals fake news.</p>
+ 
+                <div class="words-section">
+                    {% if positive_words %}
+                    <div class="word-group">
+                        <div class="group-label real-label">
+                            <span class="dot real-dot"></span> Real Signals
+                        </div>
+                        <div class="badges">
+                            {% for word in positive_words %}
+                            <span class="badge real-badge">{{ word }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+ 
+                    {% if negative_words %}
+                    <div class="word-group">
+                        <div class="group-label fake-label">
+                            <span class="dot fake-dot"></span> Fake Signals
+                        </div>
+                        <div class="badges">
+                            {% for word in negative_words %}
+                            <span class="badge fake-badge">{{ word }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+ 
+        {% endif %}
+ 
+        <footer class="footer">
+            <span>TruthLens · Built with Flask, Scikit-learn & LIME</span>
+            <!-- <span>Final Year Project · 2025</span> -->
+        </footer>
+ 
+    </main>
+ 
+</body>
+</html>
